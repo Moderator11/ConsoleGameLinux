@@ -1,4 +1,4 @@
-#include <ncurses.h>
+#include <ncurses.h> // using for compatibility with WSL2
 #include <unistd.h>
 #include <stdlib.h>
 
@@ -6,6 +6,8 @@
 #define HEIGHT 20
 #define PADDLE_WIDTH 7 // the horizontal thingy that hits the ball
 #define BALL_SPEED 90000 // the higher the slower
+
+#define BRICK '#'
 
 typedef struct {
     int x, y; // position of the ball
@@ -17,6 +19,7 @@ typedef struct {
 } Paddle;
 
 void init_game(Ball *ball, Paddle *paddle, int *bricks, int *score) {
+
     ball->x = WIDTH / 2;
     ball->y = HEIGHT / 2;
     ball->dx = 1;
@@ -29,45 +32,52 @@ void init_game(Ball *ball, Paddle *paddle, int *bricks, int *score) {
     for (int i = 0; i < WIDTH; i++) {
         bricks[i] = 1; // 1 means brick exists; this generates the bricks
     }
+
 }
 
 void draw_game(Ball *ball, Paddle *paddle, int *bricks, int score) {
+
     clear();
 
-    // Top wall
+    // Drawing the top wall
     for (int i = 0; i < WIDTH; i++) {
-        mvprintw(0, i, "-");
+        mvaddch(0, i, '-');
     }
 
 
-
-    // Bricks
+    // Drawing the bricks
     for (int j = 0; j < WIDTH; j++) {
         if (bricks[j]) {
-            mvprintw(1, j, "#");
+            mvaddch(1, j, BRICK);
         }
     }
 
     // Paddle
     for (int i = 0; i < PADDLE_WIDTH; i++) {
-        mvprintw(HEIGHT - 1, paddle->x + i, "=");
+        /*
+            mvprintw prints a string on the specified position
+            (unlike mvaddch, which prints a character)
+        */
+        mvaddch(HEIGHT - 1, paddle->x + i, '='); 
     }
 
     // Ball
-    mvprintw(ball->y, ball->x, "O");
+    mvaddch(ball->y, ball->x, 'O');
 
     // Score
     mvprintw(HEIGHT, 0, "Score: %d", score);
 
     refresh();
+
 }
 
 void update_game(Ball *ball, Paddle *paddle, int *bricks, int *score, int *running) {
+    
     // Move ball
     ball->x += ball->dx;
     ball->y += ball->dy;
 
-    // Ball collision with walls
+    // Ball collisions with walls
     if (ball->x <= 0 || ball->x >= WIDTH - 1) {
         ball->dx *= -1;
     }
@@ -75,7 +85,7 @@ void update_game(Ball *ball, Paddle *paddle, int *bricks, int *score, int *runni
         ball->dy *= -1;
     }
 
-    // Ball collision with paddle
+    // Ball collisions with paddle
     if (ball->y == HEIGHT - 2 && ball->x >= paddle->x && ball->x < paddle->x + PADDLE_WIDTH) {
         ball->dy *= -1;
     }
@@ -87,13 +97,15 @@ void update_game(Ball *ball, Paddle *paddle, int *bricks, int *score, int *runni
         (*score)++;
     }
 
-    // Ball falls below paddle
+    // When the ball falls below the paddle
     if (ball->y >= HEIGHT - 1) {
-        *running = 0;
+        *running = FALSE;
     }
+
 }
 
 void handle_input(Paddle *paddle) {
+
     int ch = getch();
     if (ch == KEY_LEFT && paddle->x > 0) {
         paddle->x--;
@@ -102,21 +114,26 @@ void handle_input(Paddle *paddle) {
         paddle->x++;
         paddle->x++;
     }
+
 }
 
 int main() {
+
     Ball ball;
     Paddle paddle;
     int bricks[WIDTH];
     int score;
-    int running = 1;
+    int running = TRUE;
 
-    // Initialize ncurses
+    // Initializing curses
     initscr();
     cbreak();
     noecho();
-    keypad(stdscr, TRUE);
-    curs_set(0);
+
+    keypad(stdscr, TRUE); // to enable the keypad
+
+    curs_set(0); // makes the cursor invisible
+
     timeout(0);
 
     init_game(&ball, &paddle, bricks, &score);
@@ -128,14 +145,14 @@ int main() {
         usleep(BALL_SPEED);
     }
 
-    // Game over message
+    // Game over
     clear();
     mvprintw(HEIGHT / 2, WIDTH / 2 - 5, "GAME OVER!");
     mvprintw(HEIGHT / 2 + 1, WIDTH / 2 - 5, "Score: %d", score);
     refresh();
-    sleep(3);
+    sleep(3); // shows for 3 seconds
 
-    // End ncurses
     endwin();
     return 0;
+
 }
