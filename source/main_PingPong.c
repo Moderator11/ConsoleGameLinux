@@ -1,29 +1,6 @@
 #pragma region Declaration
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <sys/time.h>
-#include <curses.h>
-#include <time.h>
-
-#define	BLANK		' '
-#define	DFL_SYMBOL	'o'
-
-#define	TOP_ROW		0
-#define	BOT_ROW 	(24 - 10)
-#define	LEFT_EDGE	0
-#define	RIGHT_EDGE	80
-
-#define	TICKS_PER_SEC 50
-
-struct ppball {
-    float position_y;
-    float position_x;
-    float velocity_y;
-    float velocity_x;
-	char	symbol ;
-} ;
+#include "header.h"
 
 struct ppball ball;
 float bounceCoeff = 0.95;
@@ -144,7 +121,8 @@ void ball_move(int signum)
         }
     }
     if(gameOver == 1) {
-        mvaddstr((int)(BOT_ROW * 1.5), (int)(RIGHT_EDGE * 0.375), "Press r to restart");
+        mvaddstr((int)(BOT_ROW * 1.5)-1, (int)(RIGHT_EDGE * 0.375), "Press r to restart");
+        mvaddstr((int)(BOT_ROW * 1.5), (int)(RIGHT_EDGE * 0.375), "Press q to quit");
     }
     //====Physics
     for (int y = -2; y < 3; y++)
@@ -184,14 +162,14 @@ void ball_move(int signum)
 
 #pragma region Main
 
-void StartUpScreen() {
+/*void StartUpScreen() {
     system("clear");
     printf("WASD : Move Player1\n");
     printf("IJKL : Move Player2\n");
     printf("q : Quit\n");
     printf("Press enter to start.\n");
     getchar();
-}
+}*/
 
 void HandleInput() {
     char c;
@@ -239,14 +217,14 @@ void HandleInput() {
 	}
 }
 
-int main(void)
+/*int main(void)
 {
-    StartUpScreen();
+    //StartUpScreen();
 	Initialize();
     HandleInput();
 	CleanUp();
 
 	return 0;
-}
+}*/
 
 #pragma endregion Main

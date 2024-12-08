@@ -1,14 +1,4 @@
-#include <ncursesw/curses.h>
-#include <locale.h>
-#include <sys/ioctl.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-
-#define START_LIMIT 1
-#define END_LIMIT 4
-
-#define START_POS 1
+#include "header.h"
 
 int row;
 int col;
@@ -321,6 +311,15 @@ void pingpong_game()
             clear();
             return;
         }
+        else if (cmd == '\n')
+        {
+	        Initialize();
+            HandleInput();
+	        CleanUp();
+
+	        return;
+        }
+
     }
 
     clear();
@@ -453,6 +452,11 @@ void breakout_game()
         if (cmd == 'b')
         {
             clear();
+            return;
+        }
+        else if (cmd == '\n')
+        {
+            start_game();
             return;
         }
     }

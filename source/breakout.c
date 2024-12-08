@@ -1,22 +1,4 @@
-#include <ncurses.h> // using for compatibility with WSL2
-#include <unistd.h>
-#include <stdlib.h>
-
-#define WIDTH 40
-#define HEIGHT 20
-#define PADDLE_WIDTH 7 // the horizontal thingy that hits the ball
-#define BALL_SPEED 90000 // the higher the slower
-
-#define BRICK '#'
-
-typedef struct {
-    int x, y; // position of the ball
-    int dx, dy; // change in position
-} Ball;
-
-typedef struct {
-    int x;
-} Paddle;
+#include "header.h"
 
 void init_game(Ball *ball, Paddle *paddle, int *bricks, int *score) {
 
@@ -114,11 +96,9 @@ void handle_input(Paddle *paddle) {
         paddle->x++;
         paddle->x++;
     }
-
 }
 
-int main() {
-
+void start_game() {
     Ball ball;
     Paddle paddle;
     int bricks[WIDTH];
@@ -149,10 +129,20 @@ int main() {
     clear();
     mvprintw(HEIGHT / 2, WIDTH / 2 - 5, "GAME OVER!");
     mvprintw(HEIGHT / 2 + 1, WIDTH / 2 - 5, "Score: %d", score);
+    mvprintw(HEIGHT / 2 + 3, WIDTH / 2 - 5, "Press 'q' to quit");
     refresh();
-    sleep(3); // shows for 3 seconds
+
+    int ch;
+    do {
+        ch = getch();
+    } while(ch != 'q');
 
     endwin();
-    return 0;
-
+    return;
 }
+
+/*
+int main() {
+    start_game();
+    return 0;
+}*/
