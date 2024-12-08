@@ -1,6 +1,6 @@
 #include "header.h"
 
-void init_game(Ball *ball, Paddle *paddle, int *bricks, int *score) {
+void init_game(Ball *ball, Paddle *paddle, int bricks[BRICK_ROWS][WIDTH], int *score) {
 
     ball->x = WIDTH / 2;
     ball->y = HEIGHT / 2;
@@ -11,13 +11,15 @@ void init_game(Ball *ball, Paddle *paddle, int *bricks, int *score) {
 
     *score = 0;
 
-    for (int i = 0; i < WIDTH; i++) {
-        bricks[i] = 1; // 1 means brick exists; this generates the bricks
+    for (int i = 0; i < BRICK_ROWS; i++) {
+        for(int j = 0 ; j < WIDTH ; j++) {
+            bricks[i][j] = TRUE; // TRUE means brick exists; this generates the bricks
+        }
     }
 
 }
 
-void draw_game(Ball *ball, Paddle *paddle, int *bricks, int score) {
+void draw_game(Ball *ball, Paddle *paddle, int bricks[BRICK_ROWS][WIDTH], int score) {
 
     clear();
 
@@ -28,9 +30,11 @@ void draw_game(Ball *ball, Paddle *paddle, int *bricks, int score) {
 
 
     // Drawing the bricks
-    for (int j = 0; j < WIDTH; j++) {
-        if (bricks[j]) {
-            mvaddch(1, j, BRICK);
+    for (int i = 0; i < BRICK_ROWS; i++) {
+        for(int j = 0 ; j < WIDTH ; j++) {
+            if (bricks[i][j]) {
+            mvaddch(i + 1, j, BRICK);
+        }
         }
     }
 
@@ -53,7 +57,7 @@ void draw_game(Ball *ball, Paddle *paddle, int *bricks, int score) {
 
 }
 
-void update_game(Ball *ball, Paddle *paddle, int *bricks, int *score, int *running) {
+void update_game(Ball *ball, Paddle *paddle, int bricks[BRICK_ROWS][WIDTH], int *score, int *running) {
     
     // Move ball
     ball->x += ball->dx;
@@ -73,10 +77,14 @@ void update_game(Ball *ball, Paddle *paddle, int *bricks, int *score, int *runni
     }
 
     // Ball collision with bricks
-    if (ball->y == 1 && bricks[ball->x]) {
-        bricks[ball->x] = 0;
-        ball->dy *= -1;
-        (*score)++;
+    for (int row = 0; row < BRICK_ROWS; row++) {
+        for (int col = 0; col < WIDTH; col++) {
+            if (bricks[row][col] && ball->y == row + 1 && ball->x == col) {
+                bricks[row][col] = FALSE; // Remove the brick
+                ball->dy *= -1;
+                (*score)++;
+            }
+        }
     }
 
     // When the ball falls below the paddle
@@ -101,7 +109,7 @@ void handle_input(Paddle *paddle) {
 void start_game() {
     Ball ball;
     Paddle paddle;
-    int bricks[WIDTH];
+    int bricks[BRICK_ROWS][WIDTH];
     int score;
     int running = TRUE;
 

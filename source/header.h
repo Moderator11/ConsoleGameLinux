@@ -48,6 +48,7 @@ void HandleInput();
 #define BALL_SPEED 90000 // the higher the slower
 
 #define BRICK '#'
+#define BRICK_ROWS 2 // number of brick rows
 
 typedef struct {
     int x, y; // position of the ball
@@ -58,8 +59,8 @@ typedef struct {
     int x;
 } Paddle;
 
-void init_game(Ball *, Paddle *, int *, int *);
-void draw_game(Ball *, Paddle *, int *, int);
-void update_game(Ball *, Paddle *, int *, int *, int *);
+void init_game(Ball *, Paddle *padle, int [BRICK_ROWS][WIDTH], int *);
+void draw_game(Ball *, Paddle *, int[BRICK_ROWS][WIDTH], int);
+void update_game(Ball *, Paddle *, int [BRICK_ROWS][WIDTH], int *, int *);
 void handle_input(Paddle *);
 void start_game();
