@@ -587,14 +587,17 @@ int main(void)
             if (current_screen == 1)
             {
                 pingpong_game();
+                clear();
             }
             else if (current_screen == 2)
             {
                 breakout_game();
+                clear();
             }
             else if (current_screen == 3)
             {
                 show_ranking();
+                clear();
             }
             else if (current_screen == 4)
                 break;
