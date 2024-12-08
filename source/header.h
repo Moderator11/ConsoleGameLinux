@@ -59,7 +59,7 @@ typedef struct {
     int x;
 } Paddle;
 
-void init_game(Ball *, Paddle *padle, int [BRICK_ROWS][WIDTH], int *);
+void init_game(Ball *, Paddle *, int [BRICK_ROWS][WIDTH], int *);
 void draw_game(Ball *, Paddle *, int[BRICK_ROWS][WIDTH], int);
 void update_game(Ball *, Paddle *, int [BRICK_ROWS][WIDTH], int *, int *);
 void handle_input(Paddle *);
